@@ -1,0 +1,2 @@
+# Module com.clearlyspam23.GwtDefinition
+# RPC service class, partial path of RPC policy file

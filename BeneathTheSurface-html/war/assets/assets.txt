@@ -1,0 +1,10 @@
+d:war/
+d:data
+i:data/libgdx.png
+i:FlyingEnemy.png
+i:LD29Dude.png
+i:LD29Tiles.png
+i:SlimeEnemy.png
+i:testboxes.png
+i:WeaponItems.png
+i:WeaponProjectiles.png

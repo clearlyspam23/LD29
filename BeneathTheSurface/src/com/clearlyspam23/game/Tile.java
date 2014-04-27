@@ -4,6 +4,7 @@ public class Tile {
 	
 	public boolean blocksMovement;
 	public float movementFactor;
+	public float movementCap = Float.MAX_VALUE;
 	
 	public boolean blocksMovement()
 	{
@@ -13,5 +14,11 @@ public class Tile {
 	public float getMovementFactor()
 	{
 		return movementFactor;
+	}
+	
+	public float getMovementCap()
+	{
+		return movementCap;
+		
 	}
 }

@@ -10,8 +10,12 @@ public class World {
 	
 	private Tile[][] tiles;
 	private List<Entity> entities;
+	private List<Entity> toRemove = new ArrayList<Entity>();
 	private float gravity;
+	private float terminalVelocity;
 	private List<Rectangle> tileRectangles;
+	private List<Tile> rectTypes;
+	private PlayerEntity player;
 	
 	public World(int width, int height)
 	{
@@ -21,17 +25,25 @@ public class World {
 	
 	public void update(float delta)
 	{
-		for(Entity e : entities)
+		for(Entity e : toRemove)
+			entities.remove(e);
+		toRemove.clear();
+		for(int i = 0; i < entities.size(); i++)
 		{
-			e.move(0, -gravity);
+			Entity e = entities.get(i);
 			e.move(delta);
+			if(Math.abs(e.getVelocity().y)>terminalVelocity)
+				e.setVelocity(e.getVelocity().x, Math.max(-terminalVelocity, Math.min(e.getVelocity().y, terminalVelocity)));
+			if(Math.abs(e.getVelocity().x)>terminalVelocity)
+				e.setVelocity(Math.max(-terminalVelocity, Math.min(e.getVelocity().x, terminalVelocity)), e.getVelocity().y);
+			e.update(delta);
 		}
 		for(int i = 0; i < entities.size(); i++)
 		{
 			Entity e = entities.get(i);
-			for(Rectangle r : tileRectangles)
-				if(e.getRectangle().overlaps(r))
-					e.collidesWithTile(r, null);
+			for(int j = 0; j < tileRectangles.size(); j++)
+				if(e.getRectangle().overlaps(tileRectangles.get(j)))
+					e.collidesWithTile(tileRectangles.get(j), rectTypes.get(j));
 			for(int j = i; j < entities.size(); j++)
 			{
 				Entity other = entities.get(j);
@@ -84,6 +96,8 @@ public class World {
 	{
 		entities.add(e);
 		e.setWorld(this);
+		if(e.affectedByGravity())
+			e.setAcceleration(0, -gravity);
 	}
 
 	public float getGravity() {
@@ -120,20 +134,25 @@ public class World {
 	{
 		//this function got messy fast
 		tileRectangles = new ArrayList<Rectangle>();
-		Tile[][] tilesCopy = tiles.clone();
+		rectTypes = new ArrayList<Tile>();
+		Tile[][] tilesCopy = new Tile[getWidth()][getHeight()];
+		for(int i = 0; i < tilesCopy.length; i++)
+			for(int j = 0; j < tilesCopy[i].length; j++)
+				tilesCopy[i][j] = tiles[i][j];
 		for(int i = 0; i < tilesCopy.length; i++)
 		{
 			for(int j = 0; j < tilesCopy[i].length; j++)
 			{
 				if(blocksMovement(tilesCopy[i][j]))
 				{
+					Tile t = tilesCopy[i][j];
 					int width1 = 1;
 					int height1 = Integer.MAX_VALUE;
-					for(int i2 = i+1; i2 < tilesCopy.length && blocksMovement(tilesCopy[i2][j]); i2++)
+					for(int i2 = i+1; i2 < tilesCopy.length && blocksMovementAndSame(tilesCopy[i2][j], t); i2++)
 					{
 						width1++;
 						int tempHeight = 1;
-						for(int j2 = j + 1; j2 < tilesCopy[i2].length && blocksMovement(tilesCopy[i2][j2]);j2++)
+						for(int j2 = j + 1; j2 < tilesCopy[i2].length && blocksMovementAndSame(tilesCopy[i2][j2], t);j2++)
 						{
 							tempHeight++;
 						}
@@ -144,11 +163,11 @@ public class World {
 						height1 = 1;
 					int width2 = Integer.MAX_VALUE;
 					int height2 = 1;
-					for(int j2 = j+1; j2 < tilesCopy[i].length && blocksMovement(tilesCopy[i][j2]); j2++)
+					for(int j2 = j+1; j2 < tilesCopy[i].length && blocksMovementAndSame(tilesCopy[i][j2], t); j2++)
 					{
 						height2++;
 						int tempWidth = 1;
-						for(int i2 = i + 1; i2 < tilesCopy.length && blocksMovement(tilesCopy[i2][j2]);i2++)
+						for(int i2 = i + 1; i2 < tilesCopy.length && blocksMovementAndSame(tilesCopy[i2][j2], t);i2++)
 						{
 							tempWidth++;
 						}
@@ -167,9 +186,10 @@ public class World {
 						height = height2;
 					}
 					for(int l = i; l < i +width; l++)
-						for(int m = j; m < i+height; m++)
+						for(int m = j; m < j+height; m++)
 							tilesCopy[l][m] = null;
 					tileRectangles.add(r);
+					rectTypes.add(t);
 				}
 			}
 		}
@@ -178,6 +198,32 @@ public class World {
 	private boolean blocksMovement(Tile t)
 	{
 		return t!=null&&t.blocksMovement();
+	}
+	
+	private boolean blocksMovementAndSame(Tile t, Tile other)
+	{
+		return blocksMovement(t)&&t==other;
+	}
+
+	public float getTerminalVelocity() {
+		return terminalVelocity;
+	}
+
+	public void setTerminalVelocity(float terminalVelocity) {
+		this.terminalVelocity = terminalVelocity;
+	}
+
+	public void removeEntity(Entity e) {
+		toRemove.add(e);
+	}
+
+	public PlayerEntity getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(PlayerEntity player) {
+		this.player = player;
+		addEntity(player);
 	}
 
 }

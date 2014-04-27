@@ -8,8 +8,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "BeneathTheSurface";
 		cfg.useGL20 = false;
-		cfg.width = 480;
-		cfg.height = 320;
+		cfg.width = 800;
+		cfg.height = 600;
 		
 		new LwjglApplication(new LD29Game(), cfg);
 	}
