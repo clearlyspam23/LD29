@@ -22,6 +22,7 @@ public class LD29Game implements ApplicationListener {
 	public Texture weaponItemsTexture;
 	public Texture weaponProjectileTexture;
 	public Texture flyingTexture;
+	public Texture fontTexture;
 	public Map<RenderStates, Animation> slimeEnemyAnimations;
 	public Map<RenderStates, Animation> flyingEnemyProjectile;
 	public Map<RenderStates, Animation> flyingEnemyAnimations;
@@ -55,6 +56,8 @@ public class LD29Game implements ApplicationListener {
 		playerTexture = new Texture(Gdx.files.internal("LD29Dude.png"));
 		slimeTexture = new Texture(Gdx.files.internal("SlimeEnemy.png"));
 		flyingTexture = new Texture(Gdx.files.internal("FlyingEnemy.png"));
+		fontTexture = new Texture(Gdx.files.internal("OutlineText_0.png"));
+		
 		batch = new SpriteBatch();
 		
 		flyingEnemyProjectile = new HashMap<RenderStates, Animation>();
@@ -67,7 +70,7 @@ public class LD29Game implements ApplicationListener {
 		loadSlimeRenderMap(slimeEnemyAnimations);
 		flyingEnemyAnimations = new HashMap<RenderStates, Animation>();
 		loadFlyingRenderMap(flyingEnemyAnimations);
-		textFont = new BitmapFont(Gdx.files.internal("OutlineText.fnt"), false);
+		textFont = new BitmapFont(Gdx.files.internal("data/OutlineText.fnt"), false);
 		
 		
 		
@@ -152,6 +155,11 @@ public class LD29Game implements ApplicationListener {
 		batch.dispose();
 		tileTexture.dispose();
 		playerTexture.dispose();
+		weaponItemsTexture.dispose();
+		weaponProjectileTexture.dispose();
+		slimeTexture.dispose();
+		flyingTexture.dispose();
+		fontTexture.dispose();
 	}
 
 	@Override

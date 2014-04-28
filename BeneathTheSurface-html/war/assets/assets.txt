@@ -1,9 +1,16 @@
 d:war/
 d:data
 i:data/libgdx.png
+t:data/OutlineText.fnt
+i:data/OutlineText_0.png
 i:FlyingEnemy.png
+a:Hit_Hurt.wav
+a:Jump2.wav
+a:Laser_Shoot6.wav
 i:LD29Dude.png
 i:LD29Tiles.png
+t:OutlineText.fnt
+i:OutlineText_0.png
 i:SlimeEnemy.png
 i:testboxes.png
 i:WeaponItems.png
