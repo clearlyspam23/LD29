@@ -40,6 +40,8 @@ public class UnitEntity extends TeamBasedEntity{
 	
 	public void damage(int amount){
 		health-=amount;
+		for(UnitEventListener l : listeners)
+			l.onHit(this);
 	}
 	
 	public boolean isDead(){

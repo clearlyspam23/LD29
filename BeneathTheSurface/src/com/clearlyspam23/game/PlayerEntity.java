@@ -35,9 +35,9 @@ public class PlayerEntity extends GroundUnitEntity{
 		this.primaryWeapon = primaryWeapon;
 	}
 	
-	public void onDeath()
+	public void damage(int amount)
 	{
-		System.out.println("thou art dead!");
+		super.damage(amount);
 	}
 
 	public List<Weapon> getWeapons() {

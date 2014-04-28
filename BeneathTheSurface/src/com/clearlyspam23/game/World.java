@@ -16,6 +16,7 @@ public class World {
 	private List<Rectangle> tileRectangles;
 	private List<Tile> rectTypes;
 	private PlayerEntity player;
+	private Rectangle exitRectangle = new Rectangle();
 	
 	public World(int width, int height)
 	{
@@ -224,6 +225,19 @@ public class World {
 	public void setPlayer(PlayerEntity player) {
 		this.player = player;
 		addEntity(player);
+	}
+
+	public Rectangle getExitRectangle() {
+		return exitRectangle;
+	}
+
+	public void setExitRectangle(float x, float y, float width, float height) {
+		exitRectangle.set(x, y, width, height);
+	}
+	
+	public boolean shouldExit()
+	{
+		return player.getRectangle()!=null&&player.getRectangle().overlaps(exitRectangle);
 	}
 
 }

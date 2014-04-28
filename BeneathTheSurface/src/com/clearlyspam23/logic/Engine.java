@@ -12,6 +12,8 @@ public class Engine {
 	private List<Controller<? extends Entity>> toBeRemoved = new ArrayList<Controller<? extends Entity>>();
 	private WorldView view;
 	
+	private boolean isGameOver;
+	
 	public Engine(WorldView view)
 	{
 		this.view = view;
@@ -48,6 +50,14 @@ public class Engine {
 
 	public void setView(WorldView view) {
 		this.view = view;
+	}
+
+	public boolean isGameOver() {
+		return isGameOver;
+	}
+
+	public void setGameOver(boolean isGameOver) {
+		this.isGameOver = isGameOver;
 	}
 
 }

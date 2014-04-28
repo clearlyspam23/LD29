@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,10 +17,27 @@ import com.clearlyspam23.game.World;
 public class WorldView {
 	
 	private OrthographicCamera camera;
+	private OrthographicCamera screenCamera;
 	private TileRenderData[][] data;
 	private Map<Tile, TileRenderer> tileRenderMap;
 	private SpriteBatch batch;
 	private List<EntityRenderer> entityRenderers = new ArrayList<EntityRenderer>();
+	private HealthBarView healthBar;
+	private BitmapFont font;
+	private List<FontInstance> drawTexts = new ArrayList<FontInstance>();
+	
+	private class FontInstance
+	{
+		public String text;
+		public Vector2 location = new Vector2();
+		
+		public FontInstance(String text, float x, float y)
+		{
+			TextBounds b = font.getBounds(text);
+			location.set(x-b.width/2, y-b.height/2);
+			this.text = text;
+		}
+	}
 	
 	public OrthographicCamera getCamera() {
 		return camera;
@@ -42,6 +62,9 @@ public class WorldView {
 		camera.update();
 		boundingRegion = new Vector2(boundswidth, boundsheight);
 		tileRenderMap = tileMap;
+		screenCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		screenCamera.position.set(screenCamera.viewportWidth/2, screenCamera.viewportHeight/2, 0);
+		screenCamera.update();
 	}
 	
 	public void draw(float delta)
@@ -71,7 +94,17 @@ public class WorldView {
 			r.incrementStateTime(delta);
 			r.render(batch);
 		}
+		batch.setProjectionMatrix(screenCamera.combined);
+		for(FontInstance f : drawTexts)
+			font.draw(batch, f.text, f.location.x, f.location.y);
+		if(healthBar!=null)
+			healthBar.render(batch, screenCamera.viewportWidth-168-20, screenCamera.viewportHeight-24-20, 168, 24, 1.0f*world.getPlayer().getHealth()/world.getPlayer().getMaxHealth());
 		batch.end();
+	}
+	
+	public void removeRenderer(EntityRenderer r)
+	{
+		entityRenderers.remove(r);
 	}
 	
 	private void cameraBound(OrthographicCamera camera, Vector2 location, Vector2 boundsRegion)
@@ -119,6 +152,43 @@ public class WorldView {
 
 	public void addEntityRenderer(EntityRenderer entityRenderer) {
 		entityRenderers.add(entityRenderer);
+	}
+
+	public HealthBarView getHealthBar() {
+		return healthBar;
+	}
+
+	public void setHealthBar(HealthBarView healthBar) {
+		this.healthBar = healthBar;
+	}
+	
+	public void resize(float x, float y)
+	{
+		screenCamera.viewportWidth = x;
+		screenCamera.viewportHeight = y;
+		screenCamera.position.set(x/2, y/2, 0);
+		screenCamera.update();
+	}
+
+	public OrthographicCamera getScreenCamera() {
+		return screenCamera;
+	}
+
+	public void setScreenCamera(OrthographicCamera screenCamera) {
+		this.screenCamera = screenCamera;
+	}
+	
+	public void addText(String text, float x, float y)
+	{
+		drawTexts.add(new FontInstance(text, x, y));
+	}
+
+	public BitmapFont getFont() {
+		return font;
+	}
+
+	public void setFont(BitmapFont font) {
+		this.font = font;
 	}
 
 }

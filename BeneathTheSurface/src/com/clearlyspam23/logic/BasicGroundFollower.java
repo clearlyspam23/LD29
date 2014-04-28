@@ -2,6 +2,7 @@ package com.clearlyspam23.logic;
 
 import java.util.Map;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.clearlyspam23.game.GroundUnitEntity;
 import com.clearlyspam23.game.PlayerEntity;
@@ -21,8 +22,10 @@ public class BasicGroundFollower extends UnitController<GroundUnitEntity>{
 	private float jumpHeight;
 	private DropTable table;
 	private Map<Weapon, Map<RenderStates, Animation>> weaponRenderMap;
+	private Sound jumpSound;
+	private Sound hitSound;
 
-	public BasicGroundFollower(GroundUnitEntity t, float attackDelay, int attackDamage, float movementSpeed, float jumpHeight, EntityRenderer renderer, DropTable table, Map<Weapon, Map<RenderStates, Animation>> weaponRenderMap) {
+	public BasicGroundFollower(GroundUnitEntity t, float attackDelay, int attackDamage, float movementSpeed, float jumpHeight, EntityRenderer renderer, DropTable table, Map<Weapon, Map<RenderStates, Animation>> weaponRenderMap, Sound jump, Sound hit) {
 		super(t, renderer);
 		this.maxAttackDelay = attackDelay;
 		this.attackDamage = attackDamage;
@@ -30,6 +33,8 @@ public class BasicGroundFollower extends UnitController<GroundUnitEntity>{
 		this.jumpHeight = jumpHeight;
 		this.table = table;
 		this.weaponRenderMap = weaponRenderMap;
+		this.jumpSound = jump;
+		this.hitSound = hit;
 	}
 
 	@Override
@@ -91,6 +96,16 @@ public class BasicGroundFollower extends UnitController<GroundUnitEntity>{
 				getEngine().getView().addEntityRenderer(re);
 			}
 		}
+	}
+
+	@Override
+	public void onJump(UnitEntity e) {
+		jumpSound.play(0.5f);
+	}
+
+	@Override
+	public void onHit(UnitEntity e) {
+		hitSound.play(0.5f);
 	}
 
 }

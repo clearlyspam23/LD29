@@ -81,6 +81,8 @@ public class GroundUnitEntity extends UnitEntity{
 			velo = getVelocity();
 			setVelocity(velo.x+amount*2/4*lastNormal.x, velo.y);
 			nextJumpCounter = JUMP_DELAY;
+			for(UnitEventListener l : getListeners())
+				l.onJump(this);
 		}
 		else if(nextJumpCounter>0&&!isOnGround())
 		{

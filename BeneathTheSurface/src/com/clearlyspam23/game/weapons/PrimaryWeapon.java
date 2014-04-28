@@ -6,6 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 import com.clearlyspam23.game.ProjectileEntity;
 import com.clearlyspam23.game.UnitEntity;
+import com.clearlyspam23.game.WeaponEventListener;
 
 public class PrimaryWeapon extends BasicWeapon{
 	
@@ -17,6 +18,8 @@ public class PrimaryWeapon extends BasicWeapon{
 	private float projectileDuration;
 	private Vector2 primaryBounds;
 	private float bulletSpread;
+	
+	private List<WeaponEventListener> listeners = new ArrayList<WeaponEventListener>();
 	
 	public PrimaryWeapon(float cooldown, float projectileSpeed, float projectileDuration, int projectileCount, int projectileDamage, float bulletSpread, float boundsX, float boundsY)
 	{
@@ -47,7 +50,9 @@ public class PrimaryWeapon extends BasicWeapon{
 			location.add(-getEntity().getBounds().x/2, 0);
 		float baseVelocity = projectileSpeed*(facing==UnitEntity.Facing.right ? 1 : -1);
 		ProjectileEntity e = new ProjectileEntity(location.x, location.y, primaryBounds.x, primaryBounds.y, getEntity().getTeam(), projectileDamage, projectileDuration);
-		e.setVelocity(baseVelocity, 0);
+		e.setVelocity(baseVelocity + (getEntity().getVelocity().x + getEntity().getMovement().x)/2, 0);
+		for(WeaponEventListener l : listeners)
+			e.addListener(l);
 		ans.add(e);
 		// all projectiles happen in pairs
 		float difference = bulletSpread/2f/projectileCount;
@@ -59,10 +64,14 @@ public class PrimaryWeapon extends BasicWeapon{
 			float sin = (float) Math.sin(Math.toRadians(bulletSpread/2f-runningTotal));
 			float cos = (float) Math.cos(Math.toRadians(bulletSpread/2f-runningTotal));
 			e = new ProjectileEntity(location.x, location.y, primaryBounds.x, primaryBounds.y, getEntity().getTeam(), projectileDamage, projectileDuration);
-			e.setVelocity(baseVelocity*cos + getEntity().getVelocity().x + getEntity().getMovement().x, baseVelocity*sin);
+			e.setVelocity(baseVelocity*cos + (getEntity().getVelocity().x + getEntity().getMovement().x)/2, baseVelocity*sin);
+			for(WeaponEventListener l : listeners)
+				e.addListener(l);
 			ans.add(e);
 			e = new ProjectileEntity(location.x, location.y, primaryBounds.x, primaryBounds.y, getEntity().getTeam(), projectileDamage, projectileDuration);
-			e.setVelocity(baseVelocity*cos + getEntity().getVelocity().x + getEntity().getMovement().x, baseVelocity*-sin);
+			e.setVelocity(baseVelocity*cos + (getEntity().getVelocity().x + getEntity().getMovement().x)/2, baseVelocity*-sin);
+			for(WeaponEventListener l : listeners)
+				e.addListener(l);
 			ans.add(e);
 			runningTotal+=difference;
 		}
@@ -142,6 +151,16 @@ public class PrimaryWeapon extends BasicWeapon{
 	{
 		return "cooldown: " + getBaseCooldown() + " speed: " + projectileSpeed + " duration: " + projectileDuration + " count: " + projectileCount +
 				" damage: " + projectileDamage + " spread: " + bulletSpread + " bounds: " + primaryBounds;
+	}
+
+
+	public List<WeaponEventListener> getListeners() {
+		return listeners;
+	}
+
+
+	public void addListener(WeaponEventListener listener) {
+		this.listeners.add(listener);
 	}
 
 }

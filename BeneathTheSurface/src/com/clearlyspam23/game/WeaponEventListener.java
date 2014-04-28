@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public interface WeaponEventListener {
 	
-	public void afterProjectileSpawn(Weapon w, ProjectileEntity e);
+	public void afterProjectileSpawn(ProjectileEntity e);
 	
 	public void projectileUpdate(ProjectileEntity e);
 	

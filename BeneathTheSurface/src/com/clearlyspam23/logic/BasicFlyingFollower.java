@@ -2,6 +2,7 @@ package com.clearlyspam23.logic;
 
 import java.util.Map;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.clearlyspam23.game.PlayerEntity;
@@ -31,13 +32,18 @@ public class BasicFlyingFollower extends UnitController<UnitEntity>{
 	private float attackTimer;
 	private float bigAttackTimer;
 	private float chargeDelay;
+	
+	private Sound hit;
+	private Sound shoot;
 
 	public BasicFlyingFollower(UnitEntity t, float attackDelay, float bigAttackDelay, float chargeTime, float maxDistance, float minDistance, float minimumHeight, 
 			int attackDamage, int bigProjectileCount, float movementAcceleration, float movementCap, EntityRenderer renderer, 
-			DropTable table, Map<Weapon, Map<RenderStates, Animation>> weaponRenderMap, Map<RenderStates, Animation> projectileAnim) {
+			DropTable table, Map<Weapon, Map<RenderStates, Animation>> weaponRenderMap, Map<RenderStates, Animation> projectileAnim,
+			Sound hit, Sound shoot) {
 		super(t, renderer);
 		this.attackDelay = attackTimer =attackDelay;
 		this.bigAttackDelay = bigAttackTimer = bigAttackDelay;
+		this.attackDamage = attackDamage;
 		this.movementAcceleration = movementAcceleration;
 		this.movementCap = movementCap;
 		this.table = table;
@@ -48,6 +54,8 @@ public class BasicFlyingFollower extends UnitController<UnitEntity>{
 		this.chargeTime = chargeTime;
 		this.bigProjectileCount = bigProjectileCount;
 		this.minimumHeight = minimumHeight;
+		this.hit = hit;
+		this.shoot = shoot;
 	}
 
 	@Override
@@ -74,6 +82,7 @@ public class BasicFlyingFollower extends UnitController<UnitEntity>{
 					fireProjectile(cos, sin);
 					angle+=step;
 				}
+				shoot.play(0.5f);
 			}
 			return;
 		}
@@ -114,6 +123,7 @@ public class BasicFlyingFollower extends UnitController<UnitEntity>{
 				{
 					attackTimer+=attackDelay;
 					fireProjectile(vec.x, vec.y);
+					shoot.play(0.5f);
 				}
 			}
 		}
@@ -142,6 +152,17 @@ public class BasicFlyingFollower extends UnitController<UnitEntity>{
 				getEngine().getView().addEntityRenderer(re);
 			}
 		}
+	}
+
+	@Override
+	public void onJump(UnitEntity e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onHit(UnitEntity e) {
+		hit.play(0.5f);
 	}
 
 }

@@ -28,8 +28,9 @@ public abstract class Weapon {
 		return pickUpText;
 	}
 
-	public void setPickUpText(String pickUpText) {
+	public Weapon setPickUpText(String pickUpText) {
 		this.pickUpText = pickUpText;
+		return this;
 	}
 
 }
